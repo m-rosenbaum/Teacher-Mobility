@@ -1,3 +1,6 @@
+#######################################
+# R standard files
+#######################################
 # History files
 .Rhistory
 .Rapp.history
@@ -37,3 +40,19 @@ vignettes/*.pdf
 
 # R Environment Variables
 .Renviron
+
+#######################################
+# Project folder
+#######################################
+# Data
+01_raw/
+05_clean/
+06_temp/
+
+# logs 
+04_logs/
+
+# output
+07_tables/
+08_figures/
+09_report/
