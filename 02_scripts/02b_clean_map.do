@@ -106,7 +106,7 @@ di "`cdate'"
 		rit* gt_50xile* nat_xile* n_take* // MAP Vars
 
 	ds `vars', not
-	assert "`: word count `r(varlist)''" == 0 // ensure nothing dropped
+	assert `: word count `r(varlist)'' == 1 // ensure nothing dropped
 	keep `vars'
 	order `vars'
 
@@ -115,7 +115,7 @@ di "`cdate'"
 
 
 **C. Save and exit
-	save "${data}/02b_assessment_map.dta"
+	save "${data}/02b_assessment_map.dta", replace
 
 
 **EOF**

@@ -325,8 +325,8 @@ di "`cdate'"
 
 **C. Save and quit
 	*Save for Stata and R
-	save "${data}/2b_panel_long.dta", replace
-	export delim using "${data}/2b_panel_long.csv", replace
+	save "${data}/03b_panel_long.dta", replace
+	export delim using "${data}/03b_panel_long.csv", replace
 
 	log c
 

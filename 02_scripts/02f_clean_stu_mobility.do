@@ -47,21 +47,21 @@ di "`cdate'"
 		loc vlab: var label `v'
 
 		*Save schoolname
-		if regexm("`vlab'", "School") ren `v' sch_name
-		if regexm("`vlab'", "[0-9]") ren `v' y`vlab'
-
 		*Some data modification for school ID
-		else if regexm("`vlab'", "[iI][dD]") {
+		if regexm("`vlab'", "[iI][dD]") {
 			ren `v' schid
 			tostring schid, replace
 		}
 		// end else if regexm("`vlab'", "[iI][dD]")
+		else if regexm("`vlab'", "School") ren `v' sch_name // needs to be conditionally after ID
+		if regexm("`vlab'", "[0-9]") ren `v' y`vlab'
+
 
 	}
 	// end foreach v in `r(varlist)'
 
 	*dropmissing obs
-	dropmiss, obs force
+	missings dropobs, force
 
 	*drop CPS subtotal counters
 	drop if mi(schid)
@@ -106,7 +106,7 @@ di "`cdate'"
 	loc vars schid sch_name year stu_mob_p
 
 	ds `vars', not
-	assert "`: word count `r(varlist)''" == 0 // ensure nothing dropped
+	assert `: word count `r(varlist)'' == 0 // ensure nothing dropped
 	keep `vars'
 	order `vars'
 

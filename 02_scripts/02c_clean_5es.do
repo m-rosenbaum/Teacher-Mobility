@@ -23,7 +23,7 @@ cap log close
 set more off
 
 loc cdate = subinstr("`c(current_date)'"," ", "", .) // remove spaces
-log using "${log_path}/02c_clean_5es_`cdate'.log", replace
+log using "${logs}/02c_clean_5es_`cdate'.log", replace
 di "`cdate'"
 
 

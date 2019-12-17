@@ -93,7 +93,7 @@ di "`cdate'"
 		act_read n_act_read act_math n_act_math act_comp n_act_comp
 
 	ds `vars', not
-	assert "`: word count `r(varlist)''" == 0 // ensure nothing dropped
+	assert `: word count `r(varlist)'' == 2 // ensure nothing dropped
 	keep `vars'
 	order `vars'
 

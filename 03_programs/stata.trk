@@ -1,0 +1,322 @@
+* 00000009
+*! version 1.0.0
+* Do not erase or edit this file
+* It is used by Stata to track the ado and help
+* files you have installed.
+
+S http://fmwww.bc.edu/repec/bocode/f
+N fre.pkg
+D 16 Dec 2019
+U 1
+d 'FRE': module to display one-way frequency table
+d 
+d   fre displays, for each specified variable, a univariate
+d frequency table containing counts, percent, and cumulative
+d percent. Variables may be string or numeric. Labels, in full
+d length, and values are printed. By default, fre only tabulates
+d the smallest and largest 10 values (along with all missing
+d values), but this can be changed. Furthermore,  values with zero
+d observed frequency may be included in the  tables. The default
+d for fre is to display the frequency  tables in the results
+d window. Alternatively, the tables may be written to a file on
+d disk, either tab-delimited or  LaTeX-formatted.
+d 
+d KW: data management
+d KW: frequencies
+d KW: frequency table
+d KW: tabulation
+d 
+d Requires: Stata version 9.2
+d 
+d Distribution-Date: 20150603
+d 
+d Author: Ben Jann, University of Bern
+d Support: email jann@@soz.unibe.ch
+d 
+f f\fre.ado
+f f\fre.hlp
+e
+S http://fmwww.bc.edu/repec/bocode/s
+N sdecode.pkg
+D 16 Dec 2019
+U 2
+d 'SDECODE': module to decode a numeric variable into a string variable
+d 
+d  sdecode (super decode) creates an output string variable with
+d values from the input numeric variable varname, using labels if
+d present and formats otherwise. The output string variable may
+d either replace the input numeric variable or be generated as a
+d new variable named newvar. Unlike decode, sdecode creates an
+d output string variable containing the values of the input
+d variable as output by the list command and other Stata output,
+d instead of decoding all unlabelled input values to missing.
+d sdecode is especially useful if a numeric variable has value
+d labels for some values but not for others. msdecode is a
+d multivariate version of sdecode, which inputs     a list of
+d numeric variables and (optionally) a list of delimiters,     and
+d creates a single string variable, containing the concatenated and
+d     decoded values of all the input variables, separated by the
+d   delimiters if provided.
+d 
+d KW: data manipulation
+d KW: string conversion
+d KW: value labels
+d 
+d Requires: Stata version 13.0
+d 
+d 
+d Author: Roger Newson, National Heart and Lung Institute, Imperial College London
+d Support: email r.newson@@imperial.ac.uk
+d 
+d Distribution-Date: 20130930
+d 
+f s\sdecode.ado
+f s\sdecode.sthlp
+f m\msdecode.ado
+f m\msdecode.sthlp
+e
+S http://fmwww.bc.edu/repec/bocode/s
+N sencode.pkg
+D 16 Dec 2019
+U 3
+d 'SENCODE': module to encode a string variable non-alphanumerically into a numeric variable
+d 
+d  sencode is a sequential version of encode. It takes, as input, a
+d string      variable, and generates, as output, a numeric
+d variable, with value labels    corresponding to values of the
+d string variable. Unlike encode, sencode      orders the numeric
+d values corresponding to string values in the sequential
+d order of appearance in the input string variable in the data set,
+d or in      another order specified by the user, instead of
+d ordering them in alphanumeric      order of the string value, as
+d encode does. The mapping from numeric code   values to string
+d labels may be one-to-one (coded in order of first  appearance
+d of the string value) or many-to-one (coded in each observation
+d   by the position of that observation in the data set, or in the
+d user-specified      ordering).
+d 
+d KW: data manipulation
+d 
+d Requires: Stata version 10.0
+d 
+d 
+d Author: Roger Newson, National Heart and Lung Institute, Imperial College London
+d Support: email r.newson@@imperial.ac.uk
+d 
+d Distribution-Date: 20130930
+d 
+f s\sencode.ado
+f s\sencode.sthlp
+e
+S http://fmwww.bc.edu/repec/bocode/m
+N mmerge.pkg
+D 16 Dec 2019
+U 4
+d 'MMERGE': module: Safer and easier to use variant of merge.
+d 
+d mmerge is an extension of merge that automatically sorts the
+d master  and slave data sets, allows selection of variables, and
+d provides more readable output describing the result of a merge.
+d This version (2.5.0) is an update of that published in STB-53 for
+d the latest revision of Stata version 7, which allows an unlimited
+d number of match variables. The STB-53 version of mmerge should be
+d used by Stata 6 users.
+d 
+d Author: Jeroen Weesie, Utrecht University
+d Support: email J.Weesie@@fss.uu.nl
+d 
+d Distribution-Date: 20020226
+f m\mmerge.ado
+f m\mmerge.hlp
+e
+S http://fmwww.bc.edu/repec/bocode/m
+N missings.pkg
+D 16 Dec 2019
+U 5
+d 'MISSINGS': module to manage missing values
+d 
+d  missings includes utility commands for managing variables  that
+d (may) have missing values, which variously report, list  and
+d tabulate missing values; generate a variable containing  numbers
+d of missing values; and drop variables and/or observations that
+d are all missing.   missings is intended to unite and supersede
+d the author's previous commands nmissing and dropmiss.
+d 
+d KW: missings
+d KW: drop
+d KW: data management
+d KW: missing values
+d 
+d Requires: Stata version 9
+d 
+d Distribution-Date: 20170511
+d 
+d Author: Nicholas J. Cox, Durham University
+d Support: email N.J.Cox@@durham.ac.uk
+d 
+f m\missings.ado
+f m\missings.sthlp
+e
+S http://fmwww.bc.edu/repec/bocode/o
+N outreg2.pkg
+D 16 Dec 2019
+U 6
+d 'OUTREG2': module to arrange regression outputs into an illustrative table
+d 
+d  outreg2 provides a fast and easy way to produce an illustrative
+d table  of regression outputs. The regression outputs are produced
+d piecemeal and are  difficult to compare without some type of
+d rearrangement. outreg2  automates this process by concatenating
+d the successive regression outputs in a  vertical format. The
+d resulting table is saved to the disk in ASCII  format, which can
+d be read by other programs. outreg2 thus facilitates  the
+d convertion of regression outputs to a standard format suitable
+d for  inclusion in a scholarly publication. The functionality of
+d outreg2 is based on the earlier package outreg,  by John Luke
+d Gallup. Unlike outreg, outreg2 is capable of writing LaTeX-format
+d tables, as well as ASCII, MS Word and MS Excel.
+d 
+d KW: regression
+d KW: output
+d KW: tables
+d KW: tab-delimited output
+d KW: LaTeX
+d KW: Word
+d KW: Excel
+d 
+d Requires: Stata version 7
+d 
+d Distribution-Date: 20140817
+d 
+d Author: Roy Wada
+d Support: email roywada@@hotmail.com
+d 
+f o\outreg2.ado
+f o\outreg2_prf.ado
+f o\outreg2.hlp
+f s\shellout.ado
+f s\shellout.hlp
+f s\seeout.ado
+f s\seeout.hlp
+e
+S http://fmwww.bc.edu/repec/bocode/r
+N reclink.pkg
+D 16 Dec 2019
+U 7
+d 'RECLINK': module to probabilistically match records
+d 
+d Record linkage involves attempting match records from two
+d different data files that do not share a unique and reliable key
+d field. It can be a tedious and challenging task when working with
+d multiple administrative databases where one wants to match
+d subjects using names, addresses and other identifiers that may
+d have spelling and formatting variations. Formal record linkage
+d methods often employ a combination of approximate string
+d comparators and probabilistic matching algorithms to identify the
+d best matches and assess their reliability. Some stand-alone
+d software is available for this task. This presentation will
+d introduce -reclink-, a rudimentary probabilistic record matching
+d program for Stata. -reclink- employs a modified bigram string
+d comparator and allows user-specified match and non-match weights.
+d The algorithm also provides for blocking (both "or" and "and") to
+d help improve speed for this otherwise slow procedure.
+d 
+d KW: linkage
+d KW: matching
+d 
+d Requires: Stata version 8.2
+d 
+d Distribution-Date: 20100118
+d 
+d Author: Michael Blasnik
+d Support: email mblasnik@@verizon.net
+d 
+f r\reclink.ado
+f r\reclink.hlp
+e
+S http://fmwww.bc.edu/repec/bocode/m
+N matchit.pkg
+D 16 Dec 2019
+U 8
+d 'MATCHIT': module to match two datasets based on similar text patterns
+d 
+d  matchit is a tool to join observations from two datasets based
+d on string variables which do not necessarily need to be exactly
+d the same. It performs many different string-based matching
+d techniques, allowing for a fuzzy similarity between the two
+d different text variables.
+d 
+d KW: match
+d KW: merge
+d KW: fuzzy match
+d 
+d Requires: Stata version 12 and freqindex from SSC (q.v.)
+d 
+d Distribution-Date: 20190413
+d 
+d Author: Julio Raffo, World Intellectual Property Organization
+d Support: email julio.raffo@@wipo.int
+d 
+f m\matchit.ado
+f m\matchit.sthlp
+e
+S http://fmwww.bc.edu/repec/bocode/i
+N ietoolkit.pkg
+D 16 Dec 2019
+U 9
+d 'IETOOLKIT': module providing commands specially developed for Impact Evaluations
+d 
+d  ietookit provides a set of commands that address different
+d aspects of data management and data analysis in relation to
+d Impact Evaluations. The list of commands will be extended
+d continuously, and suggestions on new commands are highly
+d appreciated. Some of the commands are related to standardized
+d practices developed at the World Bank’s unit for Impact
+d Evaluations (DIME) and might not apply to practices adopted at
+d other institutions. For these commands, the corresponding help
+d files provide justifications for the standardized practices
+d applied. ieduplicates and iecompdup are useful tools to identify
+d and correct for duplicates. iebaltab is a tool for multiple
+d treatment arm balance tables. ieboilstart standardizes the
+d boilerplate code at the top of all do-files. iegraph produces
+d graphs based on common impact evaluation regression models. See
+d https://github.com/worldbank/ietoolkit for more details.
+d 
+d KW: impact evaluations
+d KW: data management
+d KW: survey data
+d KW: data analysis
+d KW: balance tables
+d KW: difference-in-differences
+d KW: matching
+d 
+d Requires: Stata version 11
+d 
+d Distribution-Date: 20191108
+d 
+d Author: DIME Analytics, The World Bank, DECIE
+d Support: email  lcardosodeandrad@@worldbank.org
+d 
+f i\ietoolkit.ado
+f i\ietoolkit.sthlp
+f i\iebaltab.ado
+f i\iebaltab.sthlp
+f i\ieboilsave.ado
+f i\ieboilsave.sthlp
+f i\ieboilstart.ado
+f i\ieboilstart.sthlp
+f i\ieddtab.ado
+f i\ieddtab.sthlp
+f i\iedropone.ado
+f i\iedropone.sthlp
+f i\iefolder.ado
+f i\iefolder.sthlp
+f i\iegitaddmd.ado
+f i\iegitaddmd.sthlp
+f i\iegraph.ado
+f i\iegraph.sthlp
+f i\iekdensity.ado
+f i\iekdensity.sthlp
+f i\iematch.ado
+f i\iematch.sthlp
+e

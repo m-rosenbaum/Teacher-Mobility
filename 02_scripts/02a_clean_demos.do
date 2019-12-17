@@ -26,7 +26,7 @@ cap log close
 set more off
 
 loc cdate = subinstr("`c(current_date)'"," ", "", .) // remove spaces
-log using "${log_path}/02a_clean_demos_`cdate'.log", replace
+log using "${logs}/02a_clean_demos_`cdate'.log", replace
 di "`cdate'"
 
 
@@ -61,10 +61,10 @@ di "`cdate'"
 			if regexm("`vlab'", "[pP][eE]") 	ren `v' gpe
 			
 			*Reename ID values
-			if regexm("`vlab'", "[iI][dD]") 	ren `v' schid
-			if regexm("`vlab'", "[Nn]etwork") 	ren `v' network
-			if regexm("`vlab'", "[tT]otal") 	ren `v' enroll
-			if regexm("`vlab'", "School") 		ren `v' school_name
+			if regexm("`vlab'", "[iI][dD]") 		ren `v' schid 
+			else if regexm("`vlab'", "[Nn]etwork") 	ren `v' network
+			else if regexm("`vlab'", "[tT]otal") 	ren `v' enroll
+			else if regexm("`vlab'", "School") 		ren `v' school_name // in order with elses
 		}
 		// end foreach v in `r(varlist)'
 
@@ -72,7 +72,7 @@ di "`cdate'"
 		tostring schid, replace
 
 		*dropmissing obs
-		dropmiss, obs force
+		missings dropobs, force
 
 		*drop CPS subtotal counters
 		drop if mi(schid)
@@ -82,7 +82,12 @@ di "`cdate'"
 	}
 	// end forval 2013(1)$endyear
 
-	forval i = 2013(1)2018 {
+	forval i = 2013(1)$endyear {
+		if `i' == 2013 {
+			use "${temp}/enroll_`i'.dta", clear
+			erase "${temp}/enroll_`i'.dta"
+			continue
+		}
 		append using "${temp}/enroll_`i'.dta"
 		erase "${temp}/enroll_`i'.dta"
 	}
@@ -92,7 +97,6 @@ di "`cdate'"
 
 	*save file out 
 	save "${temp}/enroll.dta", replace
-	erase "${temp}/enroll_$endyear.dta"
 
 
 **B. FRL
@@ -105,7 +109,7 @@ di "`cdate'"
 		ren Total		enroll
 
 		*dropmissing obs
-		dropmiss, obs force
+		missings dropobs, force
 		if `i' == 2017 {
 			tostring schid, replace
 		}
@@ -140,8 +144,12 @@ di "`cdate'"
 	}
 
 	*Load and append
-	use "${temp}/frl_$endyear.dta", clear
-	forval i = 2013(1)2018 {
+	forval i = 2013(1)$endyear {
+		if `i' == 2013 {
+			use "${temp}/frl_`i'.dta", clear
+			erase "${temp}/frl_`i'.dta"
+			continue
+		}
 		append using "${temp}/frl_`i'.dta"
 		erase "${temp}/frl_`i'.dta"
 	}
@@ -151,7 +159,6 @@ di "`cdate'"
 
 	*save file out 
 	save "${temp}/frl.dta", replace
-	erase "${temp}/frl_$endyear.dta"
 
 
 **C. Race and Ethnciity
@@ -164,8 +171,8 @@ di "`cdate'"
 		ren Total		enroll
 
 		*dropmissing obs
-		dropmiss, obs force
-		dropmiss, force
+		missings dropobs, force
+		missings dropvars, force
 		tostring schid, replace
 
 		gen year = `i'
@@ -181,8 +188,8 @@ di "`cdate'"
 		ren Network 	network
 
 		*dropmissing obs
-		dropmiss, obs force
-		dropmiss, force
+		missings dropobs, force
+		missings dropvars, force
 		
 		if `i' == 2014 {
 			tostring schid, replace
@@ -206,8 +213,8 @@ di "`cdate'"
 	ren Total		enroll
 
 	*dropmissing obs
-	dropmiss, obs force
-	dropmiss, force
+	missings dropobs, force
+	missings dropvars, force
 	tostring schid, replace
 
 	gen year = 2013
@@ -318,7 +325,7 @@ di "`cdate'"
 		sped_p esl_p frl_p 							// Student Status
 
 	ds `vars', not
-	assert "`: word count `r(varlist)''" == 0 // ensure nothing dropped
+	assert `: word count `r(varlist)'' == 40 // ensure nothing dropped
 	keep `vars'
 	order `vars'		
 

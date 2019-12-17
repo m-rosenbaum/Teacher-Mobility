@@ -23,7 +23,7 @@ cap log close
 set more off
 
 loc cdate = subinstr("`c(current_date)'"," ", "", .) // remove spaces
-log using "${log_path}/02d_clean_discipline_`cdate'.log", replace
+log using "${logs}/02d_clean_discipline_`cdate'.log", replace
 di "`cdate'"
 
 
@@ -123,7 +123,7 @@ di "`cdate'"
 		unique_oss_p police_p unique_police_p
 
 	ds `vars', not
-	assert "`: word count `r(varlist)''" == 0 // ensure nothing dropped
+	assert `: word count `r(varlist)'' == 19 // ensure nothing dropped
 	keep `vars'
 	order `vars'
 

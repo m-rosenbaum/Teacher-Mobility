@@ -28,7 +28,7 @@ cap log close
 set more off
 
 loc cdate = subinstr("`c(current_date)'"," ", "", .) // remove spaces
-log using "${log_path}/03a_merge_school_level_`cdate'.log", replace
+log using "${logs}/03a_merge_school_level_`cdate'.log", replace
 di "`cdate'"
 
 
@@ -45,7 +45,7 @@ di "`cdate'"
 
 
 **A. Merge on MAP
-	use "${data}/02a_demos_13_18.dta", clear
+	use "${data}/02a_demos_2013_${endyear}.dta", clear
 	destring schid, replace
 	drop if year == 2019 // drop 2019 demos
 	gen has_demos = 1

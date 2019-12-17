@@ -47,16 +47,16 @@ di "`cdate'"
 		loc vlab: var label `v'
 
 		*Match to known pattern
-		if regexm("`vlab'", "[0-9]") 		ren `v' y`vlab'
-		if regexm("`vlab'", "[Nn]etwork") 	ren `v' network
-		if regexm("`vlab'", "School") 		ren `v' sch_name
-		
 		*Some var management
 		if regexm("`vlab'", "[iI][dD]") {
 			ren `v' schid
 			tostring schid, replace
 		}
 		// end if regexm("`vlab'", "[iI][dD]")
+		else if regexm("`vlab'", "School") 	ren `v' sch_name // needs to be conditional on ID
+		if regexm("`vlab'", "[0-9]") 		ren `v' y`vlab'
+		if regexm("`vlab'", "[Nn]etwork") 	ren `v' network
+		
 
 	}
 	// end foreach v in `r(varlist)'
@@ -70,7 +70,7 @@ di "`cdate'"
 
 
 	*dropmissing obs
-	dropmiss, obs force
+	missings dropobs, force
 
 	*drop CPS subtotal counters
 	drop if mi(schid)
@@ -109,7 +109,7 @@ di "`cdate'"
 	loc vars schid sch_name network year attend_p
 
 	ds `vars', not
-	assert "`: word count `r(varlist)''" == 0 // ensure nothing dropped
+	assert `: word count `r(varlist)'' == 0 // ensure nothing dropped
 	keep `vars'
 	order `vars'
 

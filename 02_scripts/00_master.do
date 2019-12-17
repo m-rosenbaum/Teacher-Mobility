@@ -76,7 +76,7 @@ pause on
     *Load packages to scripts directory for version control
     net set ado "${ados}"
 	foreach package in fre sdecode sencode mmerge missings ///
-			outreg2 reclink matchit reclink2 ietoolkit {
+			outreg2 reclink matchit ietoolkit {
 	    qui{
 	    	loc fldr = substr("`package'",1,1)
 			capture confirm file "${ados}/`fldr'/`package'.ado"
@@ -92,12 +92,12 @@ pause on
 
 **D. User control
 	*Final year for scraoe
-	gl endyear 2019 // Spring year
+	gl endyear 2018 // Spring year
 
 	*RUn locals
 	loc scrape 		1 // 0 or 1
-	loc clean 		0 // 0 or 1
-	loc outcome 	0 // 0 or 1
+	loc clean 		1 // 0 or 1
+	loc outcome 	1 // 0 or 1
 	loc analysis 	0 // 0 or 1
 
 
@@ -147,30 +147,32 @@ pause on
 	if _rc & `scrape' {
 		! "${rdir}" CMD BATCH "${dos}/01b_scrape5e.R"
 		loc scrape_done 0
-	}
 
-	*Then check every minute for shell to complete
-	loc i // init empty
-	while `scrape_done' == 0 {
-		sleep 60000 // 1 minute
-		cap confirm file "${raw}/panel_5es_2012_$endyear.csv"
-		
-		*Display counter
-		if _rc {
-			loc ++i
-			if round(`i'/60) == `i'/60 di "+" // line break every hour
-			else di ".", _continue // dots
+		*Then check every minute for shell to complete
+		loc i = 0 // init empty
+		while `scrape_done' == 0 {
+			sleep 60000 // 1 minute
+			cap confirm file "${raw}/panel_5es_2012_$endyear.csv"
+			
+			*Display counter
+			if _rc {
+				loc ++i
+				if round(`i'/60) == `i'/60 di "+" // line break every hour
+				else di ".", _continue // dots
+			}
+			// end if _rc
+
+			*Advance local if successful confirmation
+			if !_rc {
+				loc ++scrape_done
+			}
+			// end if !_rc
+
 		}
-		// end if _rc
-
-		*Advance local if successful confirmation
-		if !_rc {
-			loc ++scrape_done
-		}
-		// end if !_rc
+		// end while `scrape_done'
 
 	}
-	// end while `scrape_done'
+	// end if _rc & `scrape'
 
 
 
@@ -216,7 +218,7 @@ pause on
 	NOTES: Raw data scraped by 01b_scrape5e.R
 	AUTHOR: Michael Rosenbaum	
 	*/
-	if `clean' do "${dos}/02c_clean_5es.do"
+	*if `clean' do "${dos}/02c_clean_5es.do"
 
 
 **D. Clean Discipline
@@ -242,7 +244,7 @@ pause on
 * /!\ ATTN /!\
 * /!\ Large fuzzy merge, takes ~20 minutes to run on a laptop per academic year /!\
 * /!\ ATTN /!\
-	if `clean' do "${dos}1e_clean_employment.do"
+	*if `clean' do "${dos}02e_clean_employment.do"
 
 
 **F. Clean student mobility
@@ -253,7 +255,7 @@ pause on
 	NOTES:
 	AUTHOR: Michael Rosenbaum
 	*/
-	if `clean' do "${dos}1f_clean_stu_mobility.do"
+	if `clean' do "${dos}/02f_clean_stu_mobility.do"
 
 
 **G. Clean ACT scores
@@ -264,14 +266,18 @@ pause on
 	NOTES:
 	AUTHOR: Michael Rosenbaum
 	*/
-	if `clean' do "${dos}1g_clean_act.do"
+	if `clean' do "${dos}/02g_clean_act.do"
 
 
 **H. Clean attendance 
 	/*
-
+	PURPOSE: Clean student attendance data from CPS site							
+	INPUTS: Metrics_Attendance_$endyear.xls
+	OUTPUTS: 02h_attendence.dta			
+	NOTES:
+	AUTHOR: Michael Rosenbaum	
 	*/
-	if `clean' do "${dos}1h_clean_attendance.do"
+	if `clean' do "${dos}/02h_clean_attendance.do"
 
 
 
@@ -283,11 +289,33 @@ pause on
 
 
 **A. Merge school_level
+	/*
+	PURPOSE: Merge school level information						
+	INPUTS: ${data}/02a_demos_13_18.dta
+			${data}/02b_assessment_map.dta
+			${data}/02c_5es.dta
+			${data}/02d_discipline.dta
+			${data}/02f_stu_mobility.dta
+			${data}/02h_attendance.dta
+	OUTPUTS: 03a_school_level.dta			
+	NOTES:
+	AUTHOR: Michael Rosenbaum	
+	*/
 	if `outcome' do "${dos}/03a_merge_school_level.do"
 
 
 **B. Create outcomes
+	/*
+	PURPOSE: Merge school level information						
+	INPUTS: ${data}/03a_school_level.dta
+			${data}/02e_employment_panel.dta
+	OUTPUTS: ${data}2b_panel_long.dta
+			 ${data}2b_panel_long.csv			
+	NOTES:
+	AUTHOR: Michael Rosenbaum	
+	*/
 	if `outcome' do "${dos}/02b_create_wide.do"
+
 
 
 ***************************************
@@ -296,10 +324,32 @@ pause on
 *A. Balance Tables
 *B. Synth
 
-**A. Balance table
-	if `outcome' do "${dos}/04a_bal_tab.do"
 
-**B. Syntehtic Controls
-	if `outcome' ! "${rdir}" CMD BATCH "${dos}/04b_scrape5e.R"
+**A. Summary Statistics & Balance
+	/*
+	PURPOSE: Create balance table for various restricted sample to show sample
+			stats and approximate covariate coverage for synthetic control.						
+	INPUTS: ${data}3b_panel_long.dta
+	OUTPUTS: ${tables}4a_bal_tab.tex			
+	NOTES:
+	AUTHOR: Michael Rosenbaum
+	*/
+	if `analysis' do "${dos}/04a_bal_tab.do"
+
+
+**B. Synthetic Control
+	/*
+	Purpose: Run synthetic control specification and save figures and tables
+	Inputs: 	${clean}03b_panel_long.csv"
+	Outputs:	$(figures)sc_all_att.png
+				${figures}sc_all_tca.png
+				${figures}sc_noaoi_att.png
+				$(figures)sc_noaoi_tca.png
+	Programmer:  Michael Rosenbaum
+	if `analysis' {
+		! "${rdir}" CMD BATCH "${dos}/04b_scrape5e.R"
+	}
+	*/
+
 
 **EOF**

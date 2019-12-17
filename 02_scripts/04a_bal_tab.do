@@ -2,7 +2,7 @@
 ** 	TITLE: 04a_create_balance_table for sample restriction
 **
 **	PURPOSE: Create balance table for various restricted sample to show sample
-**			standards and approximate covariate coverage for synthetic control.
+**			stats and approximate covariate coverage for synthetic control.
 **							
 **	INPUTS: ${data}3b_panel_long.dta
 **
@@ -28,12 +28,15 @@ log using "${logs}/04a_bal_tab_`cdate'.log", replace
 di "`cdate'"
 
 
+
 *****************************
 * 1. Create iebaltab
 *****************************
 *A. Clean for iebaltab
+	
+
 	*Use long data quarter-year
-	use "${data}/3b_panel_long.dta", clear
+	use "${data}/03b_panel_long.dta", clear
 
 
 **A. clean for iebaltab
@@ -78,7 +81,7 @@ di "`cdate'"
 		and exports as a TeX file. It conducts an F-test per David McKenzie
 		as well as individual t-tests without any multiple comparison. 
 	*/
-	iebaltab `vlist', grpvar(restrict_t05) savetex("${tables}/4a_bal_tab.tex") replace
+	iebaltab `vlist', grpvar(restrict_t05) savetex("${tables}/04a_bal_tab.tex") replace
 
 
 **EOF**
