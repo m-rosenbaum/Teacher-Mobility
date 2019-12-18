@@ -37,6 +37,17 @@ di "`cdate'"
 **A. load data
 	import delimited using "${raw}/panel_5es_2012_${endyear}.csv", clear varn(1)
 
+	*Remove empty values from R
+	qui ds, has(type string)
+	foreach v in `r(varlist)' {
+		replace `v' == "" if `v' == "NA"
+		destring `v', replace
+	}
+
+	*Drop empties
+	missings dropvars, force
+	missings dropobs, force
+
 	*Choose lowerst efle
 	sort sid year efle
 	duplicates drop sid year, force
@@ -77,6 +88,8 @@ di "`cdate'"
 		colb colr qpd2 scmt trte 		/// Teacher environ 5e
 		efle_5e teen_5e					// 5E scales
 
+	ds `vars', not
+	assert `: word count `r(varlist)'' == 0
 	keep `vars'
 	order `vars'
 

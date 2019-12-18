@@ -198,11 +198,12 @@ di "`cdate'"
 	assert `r(N)' ==16 // charters and options
 
 	count if mi(act_math) & hs == 1 & has_act == 1
-	assert `r(N)' == 16 // charters and options
+	assert `r(N)' == 14 // charters and options
 	count if mi(rit_math) & es == 1 & has_map == 1
 	assert `r(N)' == 49
 
-	count if mi(efle_5e) & year >= 2014
+	count if mi(efle_5e)
+	assert `r(N)' == 279
 
 
 **C. Manage dataset 
@@ -231,25 +232,31 @@ di "`cdate'"
 	loc dif = $endyear - 2013 // full year count labeling
 
 	*Variable labels
-	lab var has_demos		"Dummy = 1: Has demographic data"
-	lab var has_map			"Dummy = 1: Has NWEA MAP assessment data"
-	lab var has_act			"Dummy = 1: Has ACT assessment data"
-	lab var has_assess		"Dummy = 1: Has Assessment data"
-	lab var has_discipline	"Dummy = 1: Has Discipline data"
-	lab var has_mobility 	"Dummy = 1: Has Student mobility data"
-	lab var has_attend		"Dummy = 1: Has Attendance data"
-	lab var has_5e 			"Dummy = 1: Has 5Es data"
+	lab var has_demos		"Dummy=1: Has demographic data"
+	lab var has_map			"Dummy=1: Has NWEA MAP assessment data"
+	lab var has_act			"Dummy=1: Has ACT assessment data"
+	lab var has_assess		"Dummy=1: Has Assessment data"
+	lab var has_discipline	"Dummy=1: Has Discipline data"
+	lab var has_mobility 	"Dummy=1: Has Student mobility data"
+	lab var has_attend		"Dummy=1: Has Attendance data"
+	lab var has_5e 			"Dummy=1: Has 5Es data"
+	lab var full_panel 		"Dummy=1: Has all `dif' years of data"
 	lab var num_years 		"Number of years school is in panel"
-	lab var full_panel 		"Dummy = 1: Has all `dif' years of data"
 
 
 **B. Keep and Order
-	loc vars schid sch_name year network /// IDs
-		has_* num_years full_panel
-
+	loc vars schid sch_name year network 		   			/// IDs
+		has_* num_years full_panel 							/// Meta-data
+		act_* gt_50xile* nat_xile* n_act* n_take* rit_*  	/// Achievment 
+		colb colr efle_5e inf3 ins3 teen_5e pgmc 			/// 5es
+		qpd2 scmt trpr trte 								///
+		attend_* rac_* enroll esl_p frl_p sped_p stu_mob_p 	/// Demos
+		charter es hs 										/// School-types
+		police_p stu_mob_p oss_p n_misconducts unique_iss_p /// Discipline 
+		unique_oss_p unique_police_p  
 
 	ds `vars', not
-	assert `: word count `r(varlist)'' == 0
+	assert `: word count `r(varlist)'' == 1
 	keep `vars'
 	order `vars'
 

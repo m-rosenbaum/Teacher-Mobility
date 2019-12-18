@@ -5,6 +5,11 @@
 **
 **	NOTES:		-Requires R 3.6.1
 **				-Requires Stata 15.1
+**				- This was originally my BA Thesis that used a Dif-in-Dif to
+**				estimate this, but did not have parallel pre-trends. I update
+**				these data as a code sample. These data should be cleaned
+**				more thoroughly, especially in the fuzzy merge across the 
+**				employment panel, if this is to be used for any sort of analysis.
 **
 **	AUTHOR:		Michael Rosenbaum
 **
@@ -95,8 +100,8 @@ pause on
 	gl endyear 2018 // Spring year
 
 	*RUn locals
-	loc scrape 		1 // 0 or 1
-	loc clean 		1 // 0 or 1
+	loc scrape 		0 // 0 or 1
+	loc clean 		0 // 0 or 1
 	loc outcome 	1 // 0 or 1
 	loc analysis 	0 // 0 or 1
 
@@ -218,7 +223,7 @@ pause on
 	NOTES: Raw data scraped by 01b_scrape5e.R
 	AUTHOR: Michael Rosenbaum	
 	*/
-	*if `clean' do "${dos}/02c_clean_5es.do"
+	if `clean' do "${dos}/02c_clean_5es.do"
 
 
 **D. Clean Discipline
@@ -309,12 +314,12 @@ pause on
 	PURPOSE: Merge school level information						
 	INPUTS: ${data}/03a_school_level.dta
 			${data}/02e_employment_panel.dta
-	OUTPUTS: ${data}2b_panel_long.dta
-			 ${data}2b_panel_long.csv			
+	OUTPUTS: ${data}/03b_panel_long.dta
+			 ${data}/03b_panel_long.csv			
 	NOTES:
 	AUTHOR: Michael Rosenbaum	
 	*/
-	if `outcome' do "${dos}/02b_create_wide.do"
+	if `outcome' do "${dos}/03b_outcomes_long.do"
 
 
 
@@ -346,10 +351,10 @@ pause on
 				${figures}sc_noaoi_att.png
 				$(figures)sc_noaoi_tca.png
 	Programmer:  Michael Rosenbaum
+	*/
 	if `analysis' {
 		! "${rdir}" CMD BATCH "${dos}/04b_scrape5e.R"
 	}
-	*/
 
 
 **EOF**
