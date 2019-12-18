@@ -2,10 +2,10 @@
 
 This folder contains scripts to scrape, clean, and analyze data in this repository. The 00_master.do file will run all files, including the R scripts. The scripts are organized as follows:
 
--Insheet (01) scrapes data from the CPS and 5Essentials sites to make it machine readable.
--Cleaning (02) imports the data into Stata and cleans each dataset
--Outcome Creation (03) merges data together at the school- and employment-time-levels, and then creates a long dataset for use in analysis.
--Analysis (04) creates a summary statistics table and runs a synthetic control model to estimate teacher mobility changes following principal separations.
+- **Insheet (01)** scrapes data from the CPS and 5Essentials sites to make it machine readable.
+- **Cleaning (02)** imports the data into Stata and cleans each dataset
+- **Outcome Creation (03)** merges data together at the school- and employment-time-levels, and then creates a long dataset for use in analysis.
+- **Analysis (04)** creates a summary statistics table and runs a synthetic control model to estimate teacher mobility changes following principal separations.
 
 These files are require Stata 15.1 and R 3.6.1. The R scripts called by Stata do not use relative references and will need to modified by hand.
 
