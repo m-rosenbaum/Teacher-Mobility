@@ -12,4 +12,4 @@ These files are require Stata 15.1 and R 3.6.1.
 *Note:*
 -	*The CPS site has changed since initial script was written. One to-do item is to update the script that scrapes yearly data releases from the [CPS data portal](https://cps.edu/SchoolData/Pages/SchoolData.aspx) to-do is to update scraping list for new CPS portal. Otherwise all data is in /Raw for now.*
 - *The R scripts called by Stata do not use relative references and will need to be individually modified by hand.*
-- *This was originally my BA Thesis that used a difference-in-differences model to estimate these costs, but did not have parallel pre-trends. I update these data as a code sample. These data should be cleaned more thoroughly, especially in the fuzzy merge across the employment panel, if this is to be used for any sort of analysis.*
+- *This was originally my BA Thesis that used a difference-in-differences model to estimate these costs, but did not have parallel pre-trends. I update these scripts for use as a code sample. If this is to be used for any sort of analysis, these data should be cleaned more thoroughly, especially in the fuzzy merge across the employment panel.*
