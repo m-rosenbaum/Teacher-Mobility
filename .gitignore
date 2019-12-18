@@ -54,5 +54,5 @@ vignettes/*.pdf
 
 # output
 07_tables/
-08_figures/
+08_figures/_archive/
 09_report/
