@@ -80,6 +80,9 @@ di "`cdate'"
 		World Bank DIME's balance tab program is perfectly fine for this
 		and exports as a TeX file. It conducts an F-test per David McKenzie
 		as well as individual t-tests without any multiple comparison. 
+
+		But, I only use the summary stats columns to show approximate equivalence.
+		Edit this in TeX to remove differences column and F-test row.
 	*/
 	iebaltab `vlist', grpvar(restrict_t05) savetex("${tables}/04a_bal_tab.tex") replace
 
