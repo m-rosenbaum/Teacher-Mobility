@@ -56,7 +56,7 @@
     ## serve as robustness checks. 
     
     # Order variables
-    cps_syn <- cps_syn %>%
+    cps_syn_full <- cps_syn %>%
       select(-any_ausl, -any_os4, -any_isp, -network, -year)
 
     # Generate restrictions
@@ -85,7 +85,7 @@
 
 ## All
     sc_all <- gsynth(p_mobility ~ sch_trt,
-                     data = cps_syn,  index = c("schid","time"), min.T0 = 5, 
+                     data = cps_syn_full,  index = c("schid","time"), min.T0 = 5, 
                      se = TRUE, inference = "nonparametric", r = c(0, 3), CV = TRUE, 
                      force = "unit", parallel = TRUE,  
                      nboots = 1000, seed = 302139) # random.org 1-999999
@@ -93,11 +93,11 @@
     # Save plots
     p <- plot(sc_all, main = "Estimated Average Treatment Effect")
     ggsave("C:/Users/Michael Rosenbaum/Documents/Coding/Teacher-Mobility/08_figures/sc_all_att.png", 
-           plot = p, width = 13, height = 8, units = "in", dpi = 300)
+           plot = p, width = 7.5, height = 4, units = "in", dpi = 300)
     p <- plot(sc_all, type = "counterfactual", raw = "all",
          main = "Treated and Counterfactual Averages")
-    ggsave("EC:/Users/Michael Rosenbaum/Documents/Coding/Teacher-Mobility/08_figures/sc_all_tca.png", 
-           plot = p, width = 13, height = 8, units = "in", dpi = 300)
+    ggsave("C:/Users/Michael Rosenbaum/Documents/Coding/Teacher-Mobility/08_figures/sc_all_tca.png", 
+           plot = p, width = 7.5, height = 4, units = "in", dpi = 300)
 
 ## No AUSL
     sc_noa <- gsynth(p_mobility ~ sch_trt,
@@ -138,11 +138,11 @@
     # Save plots
     p <- plot(sc_noaoi, main = "Estimated Average Treatment Effect: No AUSL, OS4, ISP")
         ggsave("C:/Users/Michael Rosenbaum/Documents/Coding/Teacher-Mobility/08_figures/sc_noaoi_tca.png", 
-        plot = p, width = 13, height = 8, units = "in", dpi = 300)
+        plot = p, width = 7.5, height = 4, units = "in", dpi = 300)
     p <-plot(sc_noaoi, type = "counterfactual", raw = "all",
         main = "Treated and Counterfactual Averages: No AUSL, OS4, ISP")
     ggsave("C:/Users/Michael Rosenbaum/Documents/Coding/Teacher-Mobility/08_figures/sc_noaoi_all.png", 
-        plot = p, width = 13, height = 8, units = "in", dpi = 300)
+        plot = p, width = 7.5, height = 4, units = "in", dpi = 300)
 
 
 ## print for table as export to latex for multiple models doesn't seem to be intuitive.

@@ -38,6 +38,21 @@ di "`cdate'"
 *C. Create treatment statuses
 *D. Collapse
 
+/*
+	Some cleaning revolves around time period 11 (the quarter where 
+	CPS employment data changes format). To modify this, I fill the 
+	treatment assignment dummy forward to ensure it's not missing
+	and then exclude it in the following synthetic control script.
+	This functions to the count the mid-year principal change in 
+	as a pooled 6-month panel in the middle of the 2015-16 school 
+	year.
+
+	This isn't good from an analytical perspective, but as this 
+	exercise will not be used aside as a code example, this choice
+	is fine. My preferred solution would be to get identified data 
+	and not have to deal with the fuzzy merge issues.
+*/
+
 
 **A. Load panel
 	use "${data}/02e_employment_panel.dta", clear
@@ -45,6 +60,7 @@ di "`cdate'"
 	*Create local for number of years
 	qui ds fte_p*
 	loc current_n = `: word count `r(varlist)''
+
 
 **B. Create mobility outcomes
 	*Non-mobile for each schid
@@ -75,6 +91,7 @@ di "`cdate'"
 	}
 
 	*drop assistant pricnipals
+	// MR - assistants aren't teachers and aren't principals, so remove as middle managers
 	forval i = 1(1)`current_n' {
 		drop if title`i' == "Assistant Principal"
 	}
@@ -87,7 +104,7 @@ di "`cdate'"
 			replace trt`i' = 1 if trt`j' == 1
 	}
 
-	*Zero out treatment due to CPS data containing only 220 principals in time 11
+	*Zero out treatment in time 11 due to CPS data containing only 220 principals in time 11
 	replace trt11 = 0 if trt11 == 1
 		replace trt11 = . if trt10 == 0
 		replace trt11 = 1 if trt10 == 1
@@ -147,34 +164,20 @@ di "`cdate'"
 *B. Standardize
 
 
-**A. Merge on school-level outcomes
+**A. Merge on school-level coariates
 	destring schid, replace
 
 	*Loop through months
 	forval i = 1(1)`current_n' {
-		mmerge schid year`i' using "${data}2a_school_level.dta", t(1:1) ///
-			umatch(schid year) ukeep(rac_wht_p rac_lat_p rac_blk_p enroll sped_p esl_p frl_p) uname(t`i'_)
-		foreach v in rac_wht_p rac_lat_p rac_blk_p enroll sped_p esl_p frl_p {
-			ren t`i'_`v' `v'`i'
+		mmerge schid year`i' using "${data}/03a_school_level.dta", t(1:1) umatch(schid year) ///
+			ukeep(rac_wht_p rac_lat_p rac_blk_p enroll sped_p esl_p frl_p ///
+			stu_mob_p attend_p unique_police_p oss_p rit_math rit_ela act_math ///
+			act_read efle_5e teen_5e network) uname(t`i'_)
+		ds t`i'*
+		foreach v in `r(varlist)' {
+			loc stub = subinstr("`v'","t`i'_","",.)
+			ren t`i'_`stub' `stub'`i'
 		}
-		drop if _merge == 2
-		drop _merge
-	}
-
-	forval i = 1(1)`current_n' {
-		mmerge schid year`i' using "${data}2a_school_level.dta", t(1:1) ///
-			umatch(schid year) ukeep(stu_mob_p attend_p unique_police_p oss_p rit_math rit_ela act_math act_read efle_5e teen_5e) uname(t`i'_)
-		foreach v in stu_mob_p attend_p unique_police_p oss_p rit_math rit_ela act_math act_read efle_5e teen_5e {
-			ren t`i'_`v' `v'`i'
-		}
-		drop if _merge == 2
-		drop _merge
-	}
-
-	forval i = 1(1)`current_n' {
-		mmerge schid year`i' using "${data}2a_school_level.dta", t(1:1) ///
-			umatch(schid year) ukeep(network) uname(t`i'_)
-		ren t`i'_network network`i'	
 		drop if _merge == 2
 		drop _merge
 	}
@@ -213,7 +216,6 @@ di "`cdate'"
 	// end forval i = 1(1)`current_n'
 
 
-
 **B. Standardize test scores
 	*Get number of datapoints
 	qui ds rit_ela*
@@ -222,6 +224,8 @@ di "`cdate'"
 	foreach v in rit_ela rit_math {
 		forval i = 1(1)`map_n' {
 			qui summarize `v'`i'
+			cap assert `r(N)' != 0
+			if _rc continue // skip if no MAP data for a given year
 			gen z_`v'`i' = (`v'`i' - `r(mean)') / `r(sd)'
 		}
 		// end forval i = 1(1)`map_n'
@@ -236,8 +240,11 @@ di "`cdate'"
 	foreach v in act_math act_read {
 		forval i = 1(1)`act_n' {
 			qui summarize `v'`i'
+			cap assert `r(N)' != 0
+			if _rc continue // skip if no ACT data for a given year
 			gen z_`v'`i' = (`v'`i' - `r(mean)') / `r(sd)'
 		}
+		// end forval i = 1(1)`act_n'
 	}
 
 
@@ -248,6 +255,7 @@ di "`cdate'"
 *B. Keep order
 *C. Save and quit
 
+
 **A. Varlabel
 	*only keep those with 5 years of data
 	qui ds p_mobility*
@@ -256,7 +264,7 @@ di "`cdate'"
 	loc dropn = `r(N)'
 	keep if tot_mob_data == 20
 	count 
-	assert `r(N)' == `dropn' - 21 // drop 21 schools without five years of data
+	assert `r(N)' == `dropn' - 21 // drop 21 schools (3%) without five years of data
 
 	*Drop if school closed (100% mobility)
 	qui ds p_mobility*
@@ -265,10 +273,13 @@ di "`cdate'"
 	loc dropn = `r(N)'
 	drop if max_mob == 1
 	count
-	assert `r(N)' == `dropn' - 6
+	assert `r(N)' == `dropn' - 6 // 6 schools (<1%)
 	drop max_mob
 
-	*mark with dummy those that don't have it
+	*Assign dummy for those with treatment within the exclusion period for synthetic control calculation 
+	/* Need some pre-trends for over one year and to see outcomes within a full
+		school year + 1 quarter to capture treatment effects.
+	*/
 	gen newtrt_lastyear = 1 if trt17 == 0 & (trt18 == 1 | trt19 == 1 | trt20 == 1 | trt21 == 1)
 	gen newtrt_firstyear = 1 if trt1 == 1 | trt2 == 1 | trt3 == 1 | trt4 == 1
 	count if newtrt_lastyear == 0 & newtrt_firstyear == 0
@@ -304,7 +315,6 @@ di "`cdate'"
 	** Generate dummies by network for special governance
 	gen ausl = network == 1
 	by schid: egen any_ausl = max(ausl)
-	drop ausl
 
 	gen os4 = network == 19
 	by schid: egen any_os4 = max(os4)
@@ -314,10 +324,18 @@ di "`cdate'"
 	by schid: egen any_isp = max(isp)
 	drop isp
 
+	**D. Generate restrictions
+	// restrict to no turnarounds
+	bys schid : egen max_ausl = max(ausl)
+	bys schid : egen min_ausl = min(ausl)
+	gen rest_nota = max_ausl != min_ausl
+	drop max_ausl min_ausl ausl
+
 	*Label dummies
-	lab var any_ausl "Part of AUSL in any year"
-	lab var any_os4 "Part of OS4 in any year"
-	lab var any_isp "Part of ISP in any year"
+	lab var any_ausl 	"Dummy=1: Part of AUSL in any year"
+	lab var any_os4 	"Dummy=1: Part of OS4 in any year"
+	lab var any_isp 	"Dummy=1: Part of ISP in any year"
+	lab var rest_nota 	"Dummy=1: School has never been a turnaround school"
 
 	*Compress
 	compress

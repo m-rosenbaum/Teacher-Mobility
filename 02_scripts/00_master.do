@@ -102,8 +102,8 @@ pause on
 	*RUn locals
 	loc scrape 		0 // 0 or 1
 	loc clean 		0 // 0 or 1
-	loc outcome 	1 // 0 or 1
-	loc analysis 	0 // 0 or 1
+	loc outcome 	0 // 0 or 1
+	loc analysis 	1 // 0 or 1
 
 
 
@@ -150,34 +150,8 @@ pause on
 
 	*Run shell command
 	if _rc & `scrape' {
-		! "${rdir}" CMD BATCH "${dos}/01b_scrape5e.R"
-		loc scrape_done 0
-
-		*Then check every minute for shell to complete
-		loc i = 0 // init empty
-		while `scrape_done' == 0 {
-			sleep 60000 // 1 minute
-			cap confirm file "${raw}/panel_5es_2012_$endyear.csv"
-			
-			*Display counter
-			if _rc {
-				loc ++i
-				if round(`i'/60) == `i'/60 di "+" // line break every hour
-				else di ".", _continue // dots
-			}
-			// end if _rc
-
-			*Advance local if successful confirmation
-			if !_rc {
-				loc ++scrape_done
-			}
-			// end if !_rc
-
-		}
-		// end while `scrape_done'
-
+		! "${Rdir}" CMD BATCH "${dos}/01b_scrape5e.R"
 	}
-	// end if _rc & `scrape'
 
 
 
@@ -353,7 +327,7 @@ pause on
 	Programmer:  Michael Rosenbaum
 	*/
 	if `analysis' {
-		! "${rdir}" CMD BATCH "${dos}/04b_scrape5e.R"
+		! "${Rdir}" CMD BATCH "${dos}/04b_gsynth.R"
 	}
 
 
