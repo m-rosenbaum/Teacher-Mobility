@@ -1,5 +1,9 @@
 # ReadMe
-This repo contains an analysis of the approximate cost in teacher attrition of a principal separation in Chicago public schools. To do so, it scrapes a school-level data, creates a quarterly teacher employment panel, and then analyzes these data using a synthetic control model.
+This repo contains an analysis of the approximate cost in teacher attrition of a principal separation in Chicago Public Schools (CPS). To do so, it scrapes a school-level data, creates a quarterly teacher employment panel, and then analyzes these data using a synthetic control model.
+
+It contains a series of Stata and R scripts used to collect and clean these data used in the analysis as well as the version of the Stata programs used to clean these data.
+
+*Note: as of December 15, 2019, the script scraping data from the [CPS data portal](https://cps.edu/SchoolData/Pages/SchoolData.aspx) is not included as the site has changed format since the script was originally written*
 
 ## Summary
 In the US, teacher attrition imposes substantive academic costs on students and financial costs on school districts, especially those in low-income communities. Changes in school management may affect teacher employment behavior. I use a 5-year quarterly panel of teacher employment data from Chicago Public Schools and a synthetic control model to estimate the aggregate effect of principal separation on teacher attrition. I find that principal separation is associated with an increase in the rate of teacher attrition in the following quarter by 2.7 percentage points, or 14 percent. This has implications for school management policies that remove school management in an attempt to “turn-around” schools with low-performance on district measures. These types of turnaround policies may exacerbate teacher attrition, and therefore costs, for students and schools.
@@ -19,4 +23,4 @@ To estimate this model, I use a five-year quarterly panel of employment records 
 ## Results
 I find that there is a small but significant decrease of 0.8 percentage points in teacher retention from principal separation. In the quarter following a principal separation, this rises to 2.8 percentage points, an increase of approximately 14 percent over average pretreatment period teacher attrition in treatment schools. These results suggest a relevant policy effect of management changes on teacher retention that should be studied further. However, concerns about endogeneity and external validity remain relevant in this context, as more granular employment, firing decision, and individual student retention data are available. In addition, potentially confounding changes in school-level budgets cannot be observed. Nonetheless, I find that these results are robust to a variety of restrictions based on school management structures. All results in the quarter following a principal separation are statistically significant at the p < 0.01 level.
 
-![Synthetic control results for the full sample of schools](fixraw/08_figures/sc_noaoi_all.png)
+![Synthetic control results for the full sample of schools](https://raw.githubusercontent.com/m-rosenbaum/Teacher-Mobility/blob/master/08_figures/sc_all_tca.png)
